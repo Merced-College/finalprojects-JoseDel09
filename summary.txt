@@ -1,0 +1,4 @@
+My Blackjack game project is a simple Java console application that simulates a basic version of the popular card game Blackjack 21. 
+The goal of the game is for the player to draw cards that total as close to 21 as possible without going over, while competing against the dealer. 
+So far, I’ve created the basic structure of the game, including a Card class to represent individual cards, a Deck class that builds and shuffles a standard 52 card deck, and a BlackjackGame class that resets the game, deals cards to the player, and prints the player's starting hand. 
+Next, I plan to implement player actions like hit or stand, calculate the total value of the player’s hand, and add a dealer that draws cards following Blackjack rules.
