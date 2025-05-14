@@ -1,10 +1,10 @@
 /* Jose Delgadillo
  blackJack 21 project 
- 04/28/2025 */
+ 05/13/2025 */
  
 import java.util.*;
 
-// single playing card
+// Single playing card
 class Card {
     String suit;
     String rank;
@@ -21,7 +21,7 @@ class Card {
     }
 }
 
-// deck of 52 playing cards
+// Deck of 52 playing cards
 class Deck {
     private List<Card> cards;
     private String[] suits = {"Hearts", "Diamonds", "Clubs", "Spades"};
@@ -38,7 +38,6 @@ class Deck {
         shuffle();
     }
 
-//chatGPT helped me with the utility method "Collections.shuffle(cards)" to shuffle the cards 
     public void shuffle() {
         Collections.shuffle(cards);
     }
@@ -53,21 +52,88 @@ public class BlackjackGame {
     Scanner scanner = new Scanner(System.in);
     Deck deck;
     List<Card> playerHand;
+    List<Card> dealerHand;
 
     public BlackjackGame() {
-        deck = new Deck();  // Initialize a new shuffled deck
+        deck = new Deck();
         playerHand = new ArrayList<>();
+        dealerHand = new ArrayList<>();
     }
-
-    // Start a new game
+	
     public void startGame() {
         System.out.println("Welcome to Blackjack!");
         playerHand.add(deck.dealCard());
         playerHand.add(deck.dealCard());
-        System.out.println("Your hand: " + playerHand);
+        dealerHand.add(deck.dealCard());
+        dealerHand.add(deck.dealCard());
 
+        System.out.println("Your hand: " + playerHand);
+        System.out.println("Dealer shows: " + dealerHand.get(0));
+
+        // Player's turn
+        while (true) {
+            int playerValue = calculateHandValue(playerHand);
+            System.out.println("Your hand value: " + playerValue);
+
+            if (playerValue > 21) {
+                System.out.println("You busted! Dealer wins.");
+                return;
+            }
+
+            System.out.print("Do you want to (h)it or (s)tand? ");
+            String choice = scanner.nextLine();
+
+            if (choice.equalsIgnoreCase("h")) {
+                playerHand.add(deck.dealCard());
+                System.out.println("Your hand: " + playerHand);
+            } else if (choice.equalsIgnoreCase("s")) {
+                break;
+            } else {
+                System.out.println("Invalid input. Please enter 'h' or 's'.");
+            }
+        }
+
+        // Dealer's turn
+        System.out.println("Dealer's hand: " + dealerHand);
+        while (calculateHandValue(dealerHand) < 17) {
+            dealerHand.add(deck.dealCard());
+            System.out.println("Dealer hits: " + dealerHand);
+        }
+
+        int dealerValue = calculateHandValue(dealerHand);
+        System.out.println("Dealer's final hand value: " + dealerValue);
+
+        // Determine winner
+        int playerValue = calculateHandValue(playerHand);
+        if (dealerValue > 21 || playerValue > dealerValue) {
+            System.out.println("You win!");
+        } else if (playerValue < dealerValue) {
+            System.out.println("Dealer wins!");
+        } else {
+            System.out.println("It's a tie!");
+        }
     }
-    
+
+    // Utility method to calculate hand value
+    public int calculateHandValue(List<Card> hand) {
+        int value = 0;
+        int numAces = 0;
+
+        for (Card card : hand) {
+            value += card.value;
+            if (card.rank.equals("Ace")) {
+                numAces++;
+            }
+        }
+
+        while (value > 21 && numAces > 0) {
+            value -= 10;
+            numAces--;
+        }
+
+        return value;
+    }
+
     public static void main(String[] args) {
         BlackjackGame game = new BlackjackGame();
         game.startGame();
